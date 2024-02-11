@@ -101,7 +101,106 @@ namespace Homies.Controllers
             return RedirectToAction(nameof(All));
         }
 
-     
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = await _context.Events.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            if (model.OrganiserId != GetUserId())
+            {
+                return Unauthorized();
+            }
+
+            var viewModel = new EventFormViewModel()
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Description = model.Description,
+                Start = model.Start.ToString(DataConstants.DateFormat),
+                End = model.End.ToString(DataConstants.DateFormat),
+                TypeId = model.TypeId,
+                Types = await GetTypesAsync(),
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, EventFormViewModel viewModel)
+        {
+            if (id != viewModel.Id)
+            {
+                return BadRequest();
+            }
+
+            var model = await _context.Events.FindAsync(id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            if (model.OrganiserId != GetUserId())
+            {
+                return Unauthorized();
+            }
+
+            DateTime start = DateTime.Now;
+            DateTime end = DateTime.Now;
+
+
+            if (!DateTime.TryParseExact
+                (viewModel.Start,
+                DataConstants.DateFormat,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out start))
+            {
+                ModelState
+                    .AddModelError(nameof(viewModel.Start), $"Invalid date! Format must be: {DataConstants.DateFormat}");
+            }
+
+            if (!DateTime.TryParseExact
+                (viewModel.End,
+                DataConstants.DateFormat,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out end))
+            {
+                ModelState
+                    .AddModelError(nameof(viewModel.End), $"Invalid date! Format must be: {DataConstants.DateFormat}");
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                viewModel.Types = await GetTypesAsync();
+                return View(viewModel);
+            }
+
+            model.Name = viewModel.Name;
+            model.Description = viewModel.Description;
+            model.Start = start;
+            model.End = end;
+            model.TypeId = viewModel.TypeId;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(All));
+        }
+
+        public async Task<IActionResult> Join(int id)
+        {
+            return View();
+        }
+
+
+
 
 
         private string GetUserId()

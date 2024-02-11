@@ -1,4 +1,5 @@
-﻿@{
+﻿@model EventFormViewModel
+@{
     ViewBag.Title = "Edit Info for an Event";
 }
 
@@ -33,7 +34,7 @@
                 <select asp-for="@Model.TypeId" class="form-control" aria-required="true">
                     @foreach (var type in Model.Types)
                     {
-                            <option value="@type.Id">@type.Name</option>
+                        <option value="@type.Id">@type.Name</option>
                     }
                 </select>
                 <span asp-validation-for="@Model.TypeId" class="text-danger"></span>
@@ -46,5 +47,5 @@
 </div>
 
 @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -6,6 +6,8 @@ namespace Homies.Models
 {
     public class EventFormViewModel
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = RequiredErrorMessage)]
         [StringLength(EventNameMaxLenght, MinimumLength = EventNameMinLenght, ErrorMessage = LengthErrorMessage)]
         public string Name { get; set; } = string.Empty;
