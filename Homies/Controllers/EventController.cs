@@ -196,7 +196,25 @@ namespace Homies.Controllers
 
         public async Task<IActionResult> Join(int id)
         {
-            return View();
+            var model = await _context.Events
+                .Include(x => x.EventsParticipants)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            if (!model.EventsParticipants.Any(x => x.HelperId == GetUserId()))
+            {
+                model.EventsParticipants.Add(new EventParticipant()
+                {
+                    EventId = id,
+                    HelperId = GetUserId(),
+                });
+            }
+         
+            return RedirectToAction(nameof(Joined));
         }
 
 
