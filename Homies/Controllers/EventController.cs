@@ -194,6 +194,7 @@ namespace Homies.Controllers
             return RedirectToAction(nameof(All));
         }
 
+        [HttpPost]
         public async Task<IActionResult> Join(int id)
         {
             var model = await _context.Events
@@ -212,12 +213,47 @@ namespace Homies.Controllers
                     EventId = id,
                     HelperId = GetUserId(),
                 });
+
+                await _context.SaveChangesAsync();
             }
-         
+      
             return RedirectToAction(nameof(Joined));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Joined()
+        {
+            var model = await _context.EventsParticipants
+                .Where(x => x.HelperId == GetUserId())
+                .Select(x => new EventInfoViewModel()
+                {
+                    Id = x.Event.Id,
+                    Name = x.Event.Name,
+                    Start = x.Event.Start.ToString(DataConstants.DateFormat),
+                    Type = x.Event.Type.Name,
+                    Organiser = x.Event.Organiser.UserName
+                })
+                .ToListAsync();
 
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Leave(int id)
+        {
+            var model = await _context.EventsParticipants
+                .FirstOrDefaultAsync(e => e.EventId == id && e.HelperId == GetUserId());
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            _context.EventsParticipants.Remove(model);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(All));
+        }
 
 
 
