@@ -68,9 +68,17 @@ namespace Homies.Areas.Identity.Pages.Account
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            returnUrl ??= Url.Content("~/");
+            if (User.Identity.IsAuthenticated)
+            {
+                returnUrl ??= Url.Content("~/Event/All");
+                ReturnUrl = returnUrl;
+            }
+            else
+            {
+                returnUrl ??= Url.Content("~/");
 
-            ReturnUrl = returnUrl;
+                ReturnUrl = returnUrl;
+            }
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -86,7 +94,7 @@ namespace Homies.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     return LocalRedirect(returnUrl);
-                }     
+                }
                 if (result.IsLockedOut)
                 {
                     return RedirectToPage("./Lockout");
