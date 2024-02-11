@@ -216,7 +216,7 @@ namespace Homies.Controllers
 
                 await _context.SaveChangesAsync();
             }
-      
+
             return RedirectToAction(nameof(Joined));
         }
 
@@ -255,6 +255,31 @@ namespace Homies.Controllers
             return RedirectToAction(nameof(All));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var event1 = await _context.Events
+                .AsNoTracking()
+                .Select(x => new EventDetailViewModel()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Start = x.Start.ToString(DataConstants.DateFormat),
+                    End = x.End.ToString(DataConstants.DateFormat),
+                    Organiser = x.Organiser.UserName,
+                    CreatedOn = x.CreatedOn.ToString(DataConstants.DateFormat),
+                    Type = x.Type.Name,
+                })
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (event1 == null)
+            {
+                return NotFound();
+            }
+
+            return View(event1);
+        }
 
 
         private string GetUserId()
