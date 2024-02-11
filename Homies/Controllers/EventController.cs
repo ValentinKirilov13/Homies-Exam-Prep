@@ -3,7 +3,7 @@ using Homies.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static Homies.Common.Constants.DataConstants;
+using System.Globalization;
 
 namespace Homies.Controllers
 {
@@ -26,7 +26,7 @@ namespace Homies.Controllers
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Start = x.Start.ToString(DateFormat),
+                    Start = x.Start.ToString(DataConstants.DateFormat),
                     Type = x.Type.Name,
                     Organiser = x.Organiser.UserName
                 })

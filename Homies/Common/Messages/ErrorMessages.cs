@@ -1,6 +1,6 @@
 ﻿namespace Homies.Common.Messages
 {
-    public class ErrorMessages
+    public static class ErrorMessages
     {
     }
 }
