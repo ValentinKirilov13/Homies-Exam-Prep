@@ -61,24 +61,17 @@ namespace Homies.Areas.Identity.Pages.Account
             public string Password { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            if (User.Identity.IsAuthenticated)
-            {
-                returnUrl ??= Url.Content("~/Event/All");
-                ReturnUrl = returnUrl;
-            }
-            else
-            {
                 returnUrl ??= Url.Content("~/");
 
                 ReturnUrl = returnUrl;
-            }
+
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
