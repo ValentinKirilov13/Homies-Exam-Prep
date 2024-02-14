@@ -214,6 +214,8 @@ namespace Homies.Controllers
                 });
 
                 await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Joined));
+
             }
 
             return RedirectToAction(nameof(All));
